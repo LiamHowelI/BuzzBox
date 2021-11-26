@@ -1,5 +1,6 @@
 from PiicoDev_Buzzer import PiicoDev_Buzzer
 import utime
+import gc
 
 def init_Buzzers(mul_addr = [0x5c]):
     buzz = []
@@ -27,15 +28,18 @@ def playNote(noteLst, buzz):
     
 def playMusic(music, buzz):
     start = utime.ticks_ms()
+    curr_time = utime.ticks_ms()
+    end_ti = max(i[1] for i in  music)
     i = 0
     looping = True
-    while True: 
+    while looping: 
         for i,note in enumerate(music):
             curr_time = utime.ticks_ms()
             if utime.ticks_diff(curr_time, start) >= note[2]:
                 playNote(note, buzz)
                 music.pop(i)
-            if len(music) <=0:
+            if len(music) <= 0:
+                gc.collect()
                 looping = False
-        if looping != True:
-            break
+                break
+
