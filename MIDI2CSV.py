@@ -18,26 +18,26 @@ def channelise_list(midi_list, channels = 1):
     if channels <= -1:
         print('Too few channels, the function argument "channels" is how many buzzer modules you have')
 
-    if channels > 3:
+    if channels > 4:
         print('I havent tested this, let me know how it goes!')
     # Output a list with x channels
     list_w_channels = []    # Send to PiicoDev Buzzers in the form of
                             # [CHx, Frequency;Hz, Start Time;ms, End time;ms]
     channel_OL_flag = False
     channel_counter = [0]
-    #check if they are playing at the same time
+    # Note colision detection - checks if two notes overlap
     while len(midi_list) > 1:    # For all notes check if there is a channel collision
         curr_note_start = midi_list[0][1]
         curr_note_dur = midi_list[0][2]
         removed_note = midi_list.pop(0)
-        for j in midi_list:    # Crude method - check against all other notes in list
+        for j in midi_list:    # Check against all other notes in list
             testing_note_start = j[1]
             testing_note_dur = j[2]
             given_channel = channel_counter
             if (curr_note_start < (testing_note_start + testing_note_dur)) and ((curr_note_start + curr_note_dur) > testing_note_start):
                 # A note 'collision' has occurred
                 if given_channel[0] <= channels:
-                    # Add item to list w channels
+                    # Add item to the list that will be output
                     list_w_channels.append(given_channel + removed_note)
                     # Iterate channel counter
                     channel_counter[0] += 1
@@ -86,11 +86,3 @@ def lst_to_csv(str_parse):
 lst_to_csv(channelise_list(note_lst_create(), channels = 3))
 
 print('fin')
-
-
-
-
-
-
-
-
